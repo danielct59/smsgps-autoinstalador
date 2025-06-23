@@ -200,7 +200,7 @@ sudo service cron restart
 echo "Cron job instalado com sucesso para rodar a cada minuto."
 # Exibindo mensagem de sucesso em verde
 echo -e "\033[32m\nInstalação concluída com sucesso!\n\033[0m"
-echo -e "\033[32m\nUsuário: axnet\n\033[0m"
+echo -e "\033[32m\nUsuário: axnet\033[0m"
 echo -e "\033[32mSenha: @Mel@2307\n\033[0m"
 
 
