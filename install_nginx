@@ -209,4 +209,4 @@ sudo service cron restart
 echo "Cron job instalado com sucesso para rodar a cada minuto."
 
 cd /
-rm -- "smsgps-autoinstalador"
+rm -rf "/smsgps-autoinstalador"
