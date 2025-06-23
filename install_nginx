@@ -186,12 +186,6 @@ echo "Rodando o certbot para obter o certificado SSL..."
 certbot --nginx -d $url --email danielct59@gmail.com --non-interactive --agree-tos
 
 # Removendo o arquivo install_nginx
-echo ""
-echo -e "\033[1;34m#############################################"
-echo -e "# SCRIPT DESENVOLVIDO POR: DCT SISTEMAS     #"
-echo -e "# https://www.dctsistemas.com               #"
-echo -e "#############################################"
-echo -e "\033[0m"
 
 # Acessando a raiz e removendo o arquivo de instalação
 
