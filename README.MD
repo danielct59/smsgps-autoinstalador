@@ -10,7 +10,4 @@ Versão Nginx:
 cd && rm -rf smsgpsautoinstalador && git clone https://github.com/danielct59/smsgps-autoinstalador.git && sudo chmod -R 777 ./smsgpsautoinstalador && cd ./smsgpsautoinstalador && sudo mv install_apache /install_apache && cd / && sudo rm -rf smsgpsautoinstalador && sudo chmod +x /install_apache && sudo /install_apache
 ```
 
-#############################################
-
-SCRIPT DESENVOLVIDO POR: DCT SISTEMAS      
-https://www.dctsistemas.com                
+       
