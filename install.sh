@@ -1,0 +1,187 @@
+#!/bin/bash
+
+# Mensagem personalizada no topo (credenciais)
+show_logo() {
+    clear
+    echo -e "\033[1;34m#############################################"
+    echo -e "# SCRIPT DESENVOLVIDO POR: DCT SISTEMAS     #"
+    echo -e "# https://www.dctsistemas.com               #"
+    echo -e "#############################################"
+    echo -e "\033[0m"
+    echo ""
+}
+
+# Mostrar credenciais no topo
+show_logo
+
+# Informações iniciais
+read -p "Informe a URL: " url
+read -sp "Informe a senha do Mysql: " mysql_password
+echo ""
+
+# Atualizando o sistema
+show_logo
+echo "Atualizando o sistema..."
+apt update -y
+
+# Verificando se o Certbot está instalado, caso contrário, instalando
+show_logo
+if ! command -v certbot &> /dev/null
+then
+    echo "Certbot não encontrado. Instalando..."
+    apt install certbot -y
+fi
+
+# Acessando o diretório /opt
+show_logo
+cd /opt
+
+# Clonando o repositório
+show_logo
+echo "Clonando o repositório do GitHub..."
+git clone https://github.com/danielct59/smsgps-skynet.git smsgps
+
+# Acessando o diretório smsgps
+cd smsgps
+
+# Criando o arquivo conexao.php com a senha do MySQL informada
+show_logo
+echo "Criando o arquivo conexao.php..."
+cat <<EOL > conexao.php
+<?php
+\$servername = "localhost";
+\$username = "root";
+\$password = "$mysql_password";
+\$dbname = "gps"; // Nome do banco de dados
+
+// Criação da conexão
+\$conn = new mysqli(\$servername, \$username, \$password);
+
+// Verificação da conexão
+if (\$conn->connect_error) {
+    die("Connection failed: " . \$conn->connect_error);
+}
+
+// Criação do banco de dados, caso não exista
+\$sql = "CREATE DATABASE IF NOT EXISTS gps";
+if (\$conn->query(\$sql) === TRUE) {
+} else {
+}
+
+// Seleção do banco de dados
+\$conn->select_db(\$dbname);
+
+// Criação da tabela 'configuracoes'
+\$sql_configuracoes = "
+CREATE TABLE IF NOT EXISTS configuracoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    provedor VARCHAR(255) NOT NULL,
+    dominio_api VARCHAR(255) NOT NULL,
+    chave_api VARCHAR(255) NOT NULL,
+    UNIQUE (provedor)
+)";
+\$conn->query(\$sql_configuracoes);
+
+// Criação da tabela 'mensagens_programadas'
+\$sql_mensagens_programadas = "
+CREATE TABLE IF NOT EXISTS mensagens_programadas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_rastreador INT NOT NULL,
+    id_comando INT NOT NULL,
+    status ENUM('pendente', 'enviada', 'falha') DEFAULT 'pendente',
+    FOREIGN KEY (id_rastreador) REFERENCES rastreador(id),
+    FOREIGN KEY (id_comando) REFERENCES comandos(id),
+    UNIQUE (id_rastreador, id_comando)
+)";
+\$conn->query(\$sql_mensagens_programadas);
+
+// Criação da tabela 'disparo_mensagens'
+\$sql_disparo_mensagens = "
+CREATE TABLE IF NOT EXISTS disparo_mensagens (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_rastreador INT NOT NULL,
+    id_comando INT NOT NULL,
+    numero VARCHAR(255) NOT NULL,
+    mensagem TEXT NOT NULL,
+    status ENUM('Programado', 'Enviado', 'Falha') DEFAULT 'Programado',
+    data_programacao DATETIME DEFAULT CURRENT_TIMESTAMP,  -- Modificado para DATETIME
+    FOREIGN KEY (id_rastreador) REFERENCES rastreador(id),
+    FOREIGN KEY (id_comando) REFERENCES comandos(id)
+)";
+\$conn->query(\$sql_disparo_mensagens);
+
+// Criação da tabela 'usuarios'
+\$sql_usuarios = "
+CREATE TABLE IF NOT EXISTS usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    senha VARCHAR(255) NOT NULL,
+    nivel ENUM('admin', 'user') DEFAULT 'user',
+    UNIQUE (username)
+)";
+\$conn->query(\$sql_usuarios);
+
+// Criação da tabela 'comandos'
+\$sql_comandos = "
+CREATE TABLE IF NOT EXISTS comandos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    comando VARCHAR(255) NOT NULL
+)";
+\$conn->query(\$sql_comandos);
+
+// Criação da tabela 'rastreador'
+\$sql_rastreador = "
+CREATE TABLE IF NOT EXISTS rastreador (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    marca VARCHAR(255) NOT NULL,
+    modelo VARCHAR(255) NOT NULL
+)";
+\$conn->query(\$sql_rastreador);
+
+// Criação do usuário admin
+\$sql_insert_admin = "
+INSERT INTO usuarios (username, senha, nivel) 
+VALUES ('axnet', '" . password_hash('@Mel@2307', PASSWORD_DEFAULT) . "', 'admin')
+ON DUPLICATE KEY UPDATE username = 'axnet';
+";
+\$conn->query(\$sql_insert_admin);
+?>
+EOL
+
+# Criando a entrada no Apache
+show_logo
+echo "Criando a entrada no Apache..."
+cat <<EOL > /etc/apache2/sites-available/$url.conf
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    ServerName $url
+    DocumentRoot /opt/smsgps
+
+    ErrorLog \${APACHE_LOG_DIR}/error.log
+    CustomLog \${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+EOL
+
+# Habilitando o site e reiniciando o Apache
+show_logo
+echo "Habilitando a configuração do Apache e reiniciando..."
+a2ensite $url.conf
+systemctl restart apache2
+
+# Rodando o certbot
+show_logo
+echo "Rodando o certbot para obter o certificado SSL..."
+certbot --apache -d $url --email danielct59@gmail.com --non-interactive --agree-tos
+
+# Removendo o arquivo install.sh
+show_logo
+echo "Instalação concluída com sucesso!"
+echo ""
+echo -e "\033[1;34m#############################################"
+echo -e "# SCRIPT DESENVOLVIDO POR: DCT SISTEMAS     #"
+echo -e "# https://www.dctsistemas.com               #"
+echo -e "#############################################"
+echo -e "\033[0m"
+
+# Remover o script de instalação
+rm -- "$0"
