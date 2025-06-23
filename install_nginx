@@ -193,20 +193,20 @@ echo -e "# https://www.dctsistemas.com               #"
 echo -e "#############################################"
 echo -e "\033[0m"
 
-# Exibindo mensagem de sucesso em verde
-echo -e "\033[32m\nInstalação concluída com sucesso!\n\033[0m"
-
 # Acessando a raiz e removendo o arquivo de instalação
 
 #!/bin/bash
 
 # Adiciona o cron para rodar a cada minuto
-(crontab -l 2>/dev/null; echo "* * * * * php /opt/smsgps/cron_send_message.php") | sort -u | crontab -
+(crontab -l 2>/dev/null; echo "* * * * * php /opt/smsgps/cron_send_message.php 2> /dev/null > /dev/null &") | sort -u | crontab -
 
 # Reinicia o serviço cron
 sudo service cron restart
 
 echo "Cron job instalado com sucesso para rodar a cada minuto."
+# Exibindo mensagem de sucesso em verde
+echo -e "\033[32m\nInstalação concluída com sucesso!\n\033[0m"
+
 
 cd /
 rm -rf "/smsgps-autoinstalador"
