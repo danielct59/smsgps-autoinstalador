@@ -1,12 +1,20 @@
-# Auto Instalador de Sistema SMS para Configuração Automática do Sistema Traccar
+Auto Instalador de Sistema SMS para Configuração Automática do Sistema Traccar.
 
-Este sistema consiste em um **auto instalador** para configurar automaticamente o sistema **Traccar** com suporte para **SMS**. O script automatiza a instalação e configuração dos componentes necessários, além de configurar o servidor web (Apache ou Nginx) e o banco de dados.
-
-## Como Usar
-
-### **Passo 1**: Instalar as Dependências
-
-Antes de rodar o auto instalador, é necessário garantir que o **Git** está instalado. Para isso, execute o seguinte comando:
+Versão Apache2
 
 ```bash
-sudo apt update -y && sudo apt install -y git
+sudo apt install -y git && git clone https://github.com/danielct59/smsgps-autoinstalador.git && sudo chmod -R 777 smsgpsautoinstalador && cd smsgpsautoinstalador && sudo mv install_apache /install_apache && cd / && sudo rm -rf smsgpsautoinstalador && sudo chmod +x /install_apache && sudo /install_apache
+
+```
+
+Versão Nginx
+
+```bash
+cd && rm -rf smsgpsautoinstalador && git clone https://github.com/danielct59/smsgps-autoinstalador.git && sudo chmod -R 777 ./smsgpsautoinstalador && cd ./smsgpsautoinstalador && sudo mv install_apache /install_apache && cd / && sudo rm -rf smsgpsautoinstalador && sudo chmod +x /install_apache && sudo /install_apache
+
+```
+
+#############################################
+# SCRIPT DESENVOLVIDO POR: DCT SISTEMAS     #
+# https://www.dctsistemas.com               #
+#############################################
