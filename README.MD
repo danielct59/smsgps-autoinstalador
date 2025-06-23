@@ -3,6 +3,7 @@
 Versão Nginx: (TRACCAR)
 ```bash
 cd && rm -rf smsgps-autoinstalador && git clone https://github.com/danielct59/smsgps-autoinstalador.git && cd smsgps-autoinstalador && sud chmod +x /install_apache && sudo /install_apache
+
 ```
 
 Versão Apache2: (MKAUTH)
