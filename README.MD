@@ -2,7 +2,7 @@
 
 Versão Nginx: (TRACCAR)
 ```bash
-cd && rm -rf smsgps-autoinstalador && git clone https://github.com/danielct59/smsgps-autoinstalador.git && cd smsgps-autoinstalador && sudo chmod +x /install_nginx && sudo ./install_nginx
+cd && rm -rf smsgps-autoinstalador && git clone https://github.com/danielct59/smsgps-autoinstalador.git && cd smsgps-autoinstalador && sudo chmod +x install_nginx && sudo ./install_nginx
 
 ```
 
