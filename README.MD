@@ -1,4 +1,4 @@
-#Auto Instalador de Sistema SMS para Configuração Automática do Sistema Traccar.
+# Sistema SMS
 
 Versão Apache2:
 ```bash
